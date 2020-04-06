@@ -6,11 +6,13 @@ import 'package:pandapay/pages/slideshow.dart';
 import 'package:shimmer/shimmer.dart';
 
 void main() {
-  runApp(MaterialApp(
-    home: SplashScreenPage(),
-    debugShowCheckedModeBanner: false,
-    title: 'PandaPay - kaique.dev',
-  ));
+  runApp(
+    MaterialApp(
+      home: SplashScreenPage(),
+      debugShowCheckedModeBanner: false,
+      title: 'PandaPay - kaique.dev',
+    ),
+  );
 }
 
 class SplashScreenPage extends StatefulWidget {
@@ -56,7 +58,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   }
 
   void onDoneShimmer() {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => SlideshowPage()));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => SlideshowPage()));
   }
 }
