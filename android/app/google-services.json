@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "53723046877",
+    "firebase_url": "https://pandapay-b0adf.firebaseio.com",
+    "project_id": "pandapay-b0adf",
+    "storage_bucket": "pandapay-b0adf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53723046877:android:d89ed634f6090eaed1cc34",
+        "android_client_info": {
+          "package_name": "dev.kaique.pandapay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53723046877-sft693cton9vjr27t3v2730tg9fefr36.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.kaique.pandapay",
+            "certificate_hash": "03f9a448766eba1bfc7c31b2b550f575495ab799"
+          }
+        },
+        {
+          "client_id": "53723046877-01m90c0a0o2ev81srnh8qnum1gq2agor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLyNKfUXTT0IDGNiRIDLESa47oN4g3ZPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53723046877-01m90c0a0o2ev81srnh8qnum1gq2agor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
