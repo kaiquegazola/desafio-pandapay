@@ -1,11 +1,7 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:pandapay/store/cadastro_store.dart';
 import 'package:pandapay/util/custom_form_builder_validators.dart';
 import 'package:pandapay/util/divider.dart';
 import 'package:pandapay/util/messages.dart';

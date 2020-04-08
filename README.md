@@ -23,6 +23,7 @@
 -   [mask_text_input_formatter](https://pub.dev/packages/mask_text_input_formatter): ^1.0.6
 -   [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter): ^8.8.1
 -   [flash](https://pub.dev/packages/flash): ^1.2.3
+-   [firebase_auth](https://pub.dev/packages/firebase_auth): ^0.15.5+3
 
 **Dev Dependencies:**
 
@@ -32,9 +33,11 @@
 
 ## Screenshots
 
+<p align="middle">
 <img src="screenshots/1.png" width="150" />
 <img src="screenshots/2.png" width="150" />
 <img src="screenshots/3.png" width="150" />
 <img src="screenshots/4.png" width="150" />
 <img src="screenshots/5.png" width="150" />
 <img src="screenshots/6.png" width="150" />
+</p>

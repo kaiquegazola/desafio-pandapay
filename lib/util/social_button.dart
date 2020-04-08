@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SocialButton extends StatelessWidget {
-  Color _color;
-  IconData _icon;
-  String _name;
-  Function _action;
+  final Color _color;
+  final IconData _icon;
+  final String _name;
+  final Function _action;
 
   SocialButton(this._color, this._icon, this._name, this._action);
 
