@@ -34,6 +34,9 @@ dependencies:
   flash: ^1.2.3
   firebase_auth: ^0.15.5+3
   cloud_firestore: ^0.13.4+2
+  progress_dialog: ^1.2.1
+  persistent_bottom_nav_bar: ^1.2.1
+  flutter_advanced_networkimage: ^0.7.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +65,7 @@ flutter:
   assets:
     - assets/images/PandaPay_Silhueta_SemSlogan_White.png
     - assets/images/PandaPay_Horizontal_SemSlogan_Black.png
+    - assets/images/PandaPay_Icone_Black.png
     - assets/images/slider/slide1.png
     - assets/images/slider/slide2.png
     - assets/images/slider/slide3.png

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobx/mobx.dart';
 
 part 'cadastro_store.g.dart';
@@ -22,6 +23,12 @@ abstract class _CadastroStore with Store {
 
   @observable
   String erroVerificacao;
+
+  @observable
+  AuthCredential authCredential;
+
+  @action
+  void setAuthCredential(AuthCredential value) => authCredential = value;
 
   @action
   void setErroVerificacao(String value) => erroVerificacao = value;

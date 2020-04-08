@@ -25,6 +25,9 @@
 -   [flash](https://pub.dev/packages/flash): ^1.2.3
 -   [firebase_auth](https://pub.dev/packages/firebase_auth): ^0.15.5+3
 -   [cloud_firestore](https://pub.dev/packages/cloud_firestore): ^0.13.4+2
+-   [progress_dialog](https://pub.dev/packages/progress_dialog): ^1.2.1
+-   [persistent_bottom_nav_bar](https://pub.dev/packages/persistent_bottom_nav_bar): ^1.2.1
+-   [flutter_advanced_networkimage](https://pub.dev/packages/flutter_advanced_networkimage): ^0.7.0
 
 **Dev Dependencies:**
 
@@ -41,4 +44,6 @@
 <img src="screenshots/4.png" width="150" />
 <img src="screenshots/5.png" width="150" />
 <img src="screenshots/6.png" width="150" />
+<img src="screenshots/7.png" width="150" />
+<img src="screenshots/8.png" width="150" />
 </p>

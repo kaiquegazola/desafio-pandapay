@@ -1,6 +1,7 @@
 import 'package:flash/flash.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class Messages {
   sendSuccessToast(BuildContext context, String title, String content) {
@@ -16,9 +17,15 @@ class Messages {
           child: DefaultTextStyle(
             style: TextStyle(color: Colors.white),
             child: FlashBar(
-              title: Text(title, style: TextStyle(fontWeight: FontWeight.bold),),
+              title: Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               message: Text(content),
-              icon: Icon(Icons.check, color: Colors.white,),
+              icon: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
             ),
           ),
         );
@@ -39,9 +46,15 @@ class Messages {
           child: DefaultTextStyle(
             style: TextStyle(color: Colors.white),
             child: FlashBar(
-              title: Text(title, style: TextStyle(fontWeight: FontWeight.bold),),
+              title: Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               message: Text(content),
-              icon: Icon(Icons.check, color: Colors.white,),
+              icon: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
             ),
           ),
         );
@@ -49,5 +62,12 @@ class Messages {
     );
   }
 
-
+  static ProgressDialog loadingMessage(BuildContext context, String message) {
+    ProgressDialog pr = ProgressDialog(context, isDismissible: false);
+    pr.style(
+        progressWidget: Container(
+            padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()));
+    pr.update(message: message);
+    return pr;
+  }
 }

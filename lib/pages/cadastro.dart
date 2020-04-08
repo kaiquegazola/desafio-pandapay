@@ -336,13 +336,10 @@ class _CadastroPageState extends State<CadastroPage> {
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
       _auth.signInWithCredential(phoneAuthCredential);
-      print('Received phone auth credential: $phoneAuthCredential');
     };
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
-      print(
-          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
     };
 
     final PhoneCodeSent codeSent =
@@ -414,7 +411,9 @@ class _CadastroPageState extends State<CadastroPage> {
                   final FirebaseUser currentUser = await _auth.currentUser();
                   assert(user.uid == currentUser.uid);
                   if (user != null) {
+                    cadastroStore.setAuthCredential(credential);
                     cadastroStore.setCelularVerificado(true);
+                    await _auth.signOut();
                     Navigator.of(context).pop();
                   } else {
                     cadastroStore.setErroVerificacao('Falha ao verificar.');
@@ -438,7 +437,7 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 
-  void _realizarCadastro() {
+  Future<void> _realizarCadastro() async {
     if (!_fbKey.currentState.saveAndValidate()) {
       Messages().sendWarningToast(context, 'Atenção!',
           'Verifique os dados informados antes de proseguir.');
@@ -456,10 +455,10 @@ class _CadastroPageState extends State<CadastroPage> {
         : TipoUsuario.PESSOA_JURIDICA;
     if (usuario.tipoUsuario == TipoUsuario.PESSOA_FISICA) {
       usuario.nome = _fbKey.currentState.value['nome'];
-      usuario.documento = _fbKey.currentState.value['cpf'];
+      usuario.documento = cpfMask.getUnmaskedText();
     } else {
       usuario.nome = _fbKey.currentState.value['razao_social'];
-      usuario.documento = _fbKey.currentState.value['cnpj'];
+      usuario.documento = cnpjMask.getUnmaskedText();
     }
     usuario.pais = pais;
     usuario.ddi = countryCode;
@@ -468,12 +467,24 @@ class _CadastroPageState extends State<CadastroPage> {
     usuario.email = _fbKey.currentState.value['email'];
     usuario.senha = _fbKey.currentState.value['senha'];
 
-    UsuarioRepository().cadastrar(usuario).then((value) {
+    var pr = Messages.loadingMessage(context, 'Finalizando cadastro...');
+    pr.show();
+
+    await UsuarioRepository().cadastrar(usuario).then((value) async {
+      pr.hide();
       if (value) {
         Messages().sendSuccessToast(
             context, 'Sucesso!', 'Cadastro efetuado, aguarde...');
+        AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+            email: usuario.email, password: usuario.senha);
+        authResult.user.linkWithCredential(cadastroStore.authCredential);
+        UserUpdateInfo info = new UserUpdateInfo();
+        info.displayName = usuario.nome;
+        authResult.user.updateProfile(info);
+
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PrincipalPage()));
+            MaterialPageRoute(builder: (context) => PrincipalPage(usuario)));
+
       } else {
         Messages().sendWarningToast(context, 'Atenção!',
             'Não foi possível efetuar cadastro no momento, tente novamente mais tarde.');

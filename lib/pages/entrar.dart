@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pandapay/model/usuario.dart';
+import 'package:pandapay/pages/principal.dart';
+import 'package:pandapay/repository/usuario_repository.dart';
 import 'package:pandapay/util/custom_form_builder_validators.dart';
 import 'package:pandapay/util/divider.dart';
 import 'package:pandapay/util/messages.dart';
@@ -50,7 +54,8 @@ class _EntrarPageState extends State<EntrarPage> {
                     child: Text(
                       "Seja bem-vindo(a) de volta!",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.w300, fontSize: 15),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w300, fontSize: 15),
                     ),
                   ),
                   Container(
@@ -86,7 +91,9 @@ class _EntrarPageState extends State<EntrarPage> {
                   ),
                   Center(
                     child: OutlineButton(
-                      onPressed: _efetuarLogin,
+                      onPressed: () async {
+                        await _efetuarLogin(context);
+                      },
                       child: Text(
                         "Entrar",
                       ),
@@ -112,13 +119,33 @@ class _EntrarPageState extends State<EntrarPage> {
     );
   }
 
-  void _efetuarLogin() {
+  _efetuarLogin(BuildContext ctx) async {
     if (!_fbKey.currentState.saveAndValidate()) {
-      Messages().sendWarningToast(context, 'Atenção!',
-          'Verifique os dados informados antes de proseguir.');
+      Messages().sendWarningToast(
+          ctx, 'Atenção!', 'Verifique os dados informados antes de proseguir.');
       return;
     }
-    Messages()
-        .sendSuccessToast(context, 'Sucesso!', 'Aguarde enquanto carregamos suas informações...');
+
+    Usuario usuario = Usuario();
+    usuario.email = _fbKey.currentState.value['login'];
+    usuario.senha = _fbKey.currentState.value['senha'];
+
+    var pr = Messages.loadingMessage(ctx, 'Verificando informações...');
+    pr.show();
+    usuario = await UsuarioRepository().entrar(usuario);
+    pr.hide();
+    if (usuario != null) {
+      Messages().sendSuccessToast(
+          ctx, 'Sucesso!', 'Aguarde enquanto carregamos suas informações...');
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: usuario.email, password: usuario.senha);
+      Navigator.pushReplacement(
+          ctx,
+          MaterialPageRoute(
+              builder: (BuildContext context) => PrincipalPage(usuario)));
+    } else {
+      Messages()
+          .sendWarningToast(ctx, 'Atenção!', 'Usuário e/ou senha invalido(s).');
+    }
   }
 }

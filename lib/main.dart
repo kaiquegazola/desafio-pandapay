@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pandapay/pages/principal.dart';
 import 'package:pandapay/pages/slideshow.dart';
+import 'package:pandapay/repository/usuario_repository.dart';
 import 'package:shimmer/shimmer.dart';
 
 void main() {
@@ -11,8 +14,7 @@ void main() {
       home: SplashScreenPage(),
       debugShowCheckedModeBanner: false,
       title: 'PandaPay - kaique.dev',
-      theme: ThemeData(
-      ),
+      theme: ThemeData(primaryColor: Color(0xFF191919)),
     ),
   );
 }
@@ -39,8 +41,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
                 highlightColor: Color(0xFF333333),
                 child: Image.asset(
                     'assets/images/PandaPay_Silhueta_SemSlogan_White.png'),
-                period: Duration(seconds: 3),
-                loop: 1,
+                period: Duration(seconds: 2),
+                loop: 0,
               ),
             ),
             Text(
@@ -56,11 +58,20 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 5), onDoneShimmer);
+    Timer(Duration(seconds: 3), onDoneShimmer);
   }
 
-  void onDoneShimmer() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => SlideshowPage()));
+  Future<void> onDoneShimmer() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    await _auth.currentUser().then((value) async {
+      if (value != null) {
+        var usuario = await UsuarioRepository().getUsuario(value);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PrincipalPage(usuario)));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => SlideshowPage()));
+      }
+    });
   }
 }
