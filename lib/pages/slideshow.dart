@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:pandapay/pages/cadastro.dart';
+import 'package:pandapay/pages/entrar.dart';
 
 class SlideshowPage extends StatefulWidget {
   @override
@@ -100,7 +101,12 @@ class _SlideshowPageState extends State<SlideshowPage> {
           height: 10,
         ),
         FlatButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => EntrarPage()));
+          },
           child: Text(
             "Já tem cadastro no PandaPay?",
             style: TextStyle(color: Colors.white),

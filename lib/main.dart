@@ -11,6 +11,8 @@ void main() {
       home: SplashScreenPage(),
       debugShowCheckedModeBanner: false,
       title: 'PandaPay - kaique.dev',
+      theme: ThemeData(
+      ),
     ),
   );
 }
