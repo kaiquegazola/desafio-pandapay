@@ -24,6 +24,7 @@
 -   [font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter): ^8.8.1
 -   [flash](https://pub.dev/packages/flash): ^1.2.3
 -   [firebase_auth](https://pub.dev/packages/firebase_auth): ^0.15.5+3
+-   [cloud_firestore](https://pub.dev/packages/cloud_firestore): ^0.13.4+2
 
 **Dev Dependencies:**
 
