@@ -43,4 +43,5 @@ abstract class _CadastroStore with Store {
 
   @action
   void setTipoConta(int value) => tipoConta = value;
+
 }

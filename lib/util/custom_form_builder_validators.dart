@@ -19,10 +19,11 @@ class CustomFormBuilderValidators {
     };
   }
 
-  static FormFieldValidator confirmarSenha(String senha, {
+  static FormFieldValidator confirmarSenha(TextEditingController controller, {
     String errorText = "Senhas não são iguais.",
   }) {
     return (valueCandidate) {
+      String senha = controller.text;
       if (valueCandidate != null && valueCandidate.isNotEmpty) {
         if (valueCandidate != senha) {
           return errorText;

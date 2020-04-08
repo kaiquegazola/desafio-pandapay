@@ -9,6 +9,10 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:pandapay/model/tipo_usuario.dart';
+import 'package:pandapay/model/usuario.dart';
+import 'package:pandapay/pages/principal.dart';
+import 'package:pandapay/repository/usuario_repository.dart';
 import 'package:pandapay/store/cadastro_store.dart';
 import 'package:pandapay/util/custom_form_builder_validators.dart';
 import 'package:pandapay/util/divider.dart';
@@ -23,12 +27,13 @@ class CadastroPage extends StatefulWidget {
 class _CadastroPageState extends State<CadastroPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  final TextEditingController _senhaController = TextEditingController();
   CadastroStore cadastroStore = CadastroStore();
+  String countryCode = "+55";
+  String pais = 'BR';
   var celularMask = new MaskTextInputFormatter(mask: '(##) #####-####');
   var cpfMask = new MaskTextInputFormatter(mask: '###.###.###-##');
   var cnpjMask = new MaskTextInputFormatter(mask: '##.###.###/####-##');
-  String senhaAtual;
-  String countryCode = "+55";
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +51,13 @@ class _CadastroPageState extends State<CadastroPage> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: FormBuilder(
-          key: _fbKey,
-          autovalidate: true,
-          child: Observer(builder: (_) {
-            return Column(
+      body: Observer(builder: (_) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: FormBuilder(
+            key: _fbKey,
+            autovalidate: true,
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -98,10 +103,10 @@ class _CadastroPageState extends State<CadastroPage> {
                 else if (cadastroStore.continuarCom == 1)
                   cadastroEmail()
               ],
-            );
-          }),
-        ),
-      ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -109,8 +114,10 @@ class _CadastroPageState extends State<CadastroPage> {
     return Column(
       children: <Widget>[
         FormBuilderTextField(
+          textInputAction: TextInputAction.next,
           attribute: "nome",
           decoration: InputDecoration(labelText: "Nome Completo"),
+          maxLines: 1,
           validators: [
             CustomFormBuilderValidators.required(),
             FormBuilderValidators.max(70),
@@ -119,6 +126,8 @@ class _CadastroPageState extends State<CadastroPage> {
         FormBuilderTextField(
           attribute: "cpf",
           decoration: InputDecoration(labelText: "CPF"),
+          textInputAction: TextInputAction.next,
+          maxLines: 1,
           keyboardType: TextInputType.number,
           inputFormatters: [cpfMask],
           validators: [
@@ -131,84 +140,87 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   Widget celularConfirm() {
-    return Builder(builder: (context) {
-      return Card(
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Observer(builder: (_) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("Telefone Celular"),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Observer(builder: (_) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("Telefone Celular"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: CountryCodePicker(
+                      enabled: !cadastroStore.celularVerificado,
+                      searchDecoration:
+                          InputDecoration(labelText: 'Buscar País'),
+                      onChanged: (country) {
+                        countryCode = country.dialCode;
+                        pais = country.code;
+                      },
+                      initialSelection: 'BR',
+                      favorite: ['US', 'BR'],
+                      showCountryOnly: false,
+                      showOnlyCountryWhenClosed: false,
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: FormBuilderTextField(
+                      attribute: "celular",
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (term) {
+                        _enviarSMS(context);
+                      },
+                      decoration: InputDecoration(
+                          hintText: '(XX) XXXXX-XXXX',
+                          border: cadastroStore.celularVerificado
+                              ? InputBorder.none
+                              : null),
+                      readOnly: cadastroStore.celularVerificado,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [celularMask],
+                      validators: [
+                        CustomFormBuilderValidators.required(),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  if (!cadastroStore.celularVerificado)
                     Container(
-                      child: CountryCodePicker(
-                        enabled: !cadastroStore.celularVerificado,
-                        searchDecoration:
-                            InputDecoration(labelText: 'Buscar País'),
-                        onChanged: (country) {
-                          countryCode = country.dialCode;
-                        },
-                        initialSelection: 'BR',
-                        favorite: ['US', 'BR'],
-                        showCountryOnly: false,
-                        showOnlyCountryWhenClosed: false,
-                        padding: EdgeInsets.zero,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: FormBuilderTextField(
-                        attribute: "celular",
-                        decoration: InputDecoration(
-                            hintText: '(XX) XXXXX-XXXX',
-                            border: cadastroStore.celularVerificado
-                                ? InputBorder.none
-                                : null),
-                        readOnly: cadastroStore.celularVerificado,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [celularMask],
-                        validators: [
-                          CustomFormBuilderValidators.required(),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    if (!cadastroStore.celularVerificado)
-                      Container(
-                        width: 80,
-                        child: RaisedButton(
-                          color: Colors.white,
-                          onPressed: () => _enviarSMS(context),
-                          child: Text(
-                            "Confirmar",
-                            style: TextStyle(fontSize: 10),
-                          ),
+                      width: 80,
+                      child: RaisedButton(
+                        color: Colors.white,
+                        onPressed: () => _enviarSMS(context),
+                        child: Text(
+                          "Confirmar",
+                          style: TextStyle(fontSize: 10),
                         ),
                       ),
-                    if (cadastroStore.celularVerificado)
-                      Center(
-                        child: Icon(
-                          Icons.check_box,
-                          color: Colors.green,
-                        ),
+                    ),
+                  if (cadastroStore.celularVerificado)
+                    Center(
+                      child: Icon(
+                        Icons.check_box,
+                        color: Colors.green,
                       ),
-                  ],
-                ),
-              ],
-            );
-          }),
-        ),
-      );
-    });
+                    ),
+                ],
+              ),
+            ],
+          );
+        }),
+      ),
+    );
   }
 
   Widget cadastroEmpresarial() {
@@ -216,7 +228,9 @@ class _CadastroPageState extends State<CadastroPage> {
       children: <Widget>[
         FormBuilderTextField(
           attribute: "razao_social",
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(labelText: "Razão Social"),
+          maxLines: 1,
           validators: [
             CustomFormBuilderValidators.required(),
             FormBuilderValidators.max(70),
@@ -225,6 +239,8 @@ class _CadastroPageState extends State<CadastroPage> {
         FormBuilderTextField(
           attribute: "CNPJ",
           decoration: InputDecoration(labelText: "CNPJ"),
+          textInputAction: TextInputAction.next,
+          maxLines: 1,
           keyboardType: TextInputType.number,
           inputFormatters: [cnpjMask],
           validators: [
@@ -249,75 +265,63 @@ class _CadastroPageState extends State<CadastroPage> {
   }
 
   Widget cadastroEmail() {
-    return Builder(builder: (context) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FormBuilderTextField(
-            attribute: "email",
-            decoration: InputDecoration(labelText: "E-mail"),
-            validators: [
-              CustomFormBuilderValidators.required(),
-              FormBuilderValidators.email(errorText: 'E-mail inválido.'),
-            ],
-          ),
-          FormBuilderTextField(
-            attribute: "senha",
-            decoration: InputDecoration(labelText: "Senha"),
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: true,
-            maxLines: 1,
-            validators: [
-              CustomFormBuilderValidators.required(),
-              FormBuilderValidators.minLength(8,
-                  errorText: "Mínimo de 8 caracteres."),
-            ],
-            onFieldSubmitted: (senha) {
-              senhaAtual = senha;
-            },
-          ),
-          FormBuilderTextField(
-            attribute: "confirmacao_senha",
-            decoration: InputDecoration(labelText: "Senha (confirmação)"),
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: true,
-            maxLines: 1,
-            validators: [
-              CustomFormBuilderValidators.required(),
-              FormBuilderValidators.minLength(8,
-                  errorText: "Mínimo de 8 caracteres."),
-              CustomFormBuilderValidators.confirmarSenha(senhaAtual),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 15),
-            child: Center(
-              child: OutlineButton(
-                onPressed: _realizarCadastro,
-                child: Text(
-                  "Finalizar Cadastro",
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormBuilderTextField(
+          attribute: "email",
+          decoration: InputDecoration(labelText: "E-mail"),
+          textInputAction: TextInputAction.next,
+          maxLines: 1,
+          validators: [
+            CustomFormBuilderValidators.required(),
+            FormBuilderValidators.email(errorText: 'E-mail inválido.'),
+          ],
+        ),
+        FormBuilderTextField(
+          controller: _senhaController,
+          attribute: "senha",
+          decoration: InputDecoration(labelText: "Senha"),
+          textInputAction: TextInputAction.next,
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
+          maxLines: 1,
+          validators: [
+            CustomFormBuilderValidators.required(),
+            FormBuilderValidators.minLength(8,
+                errorText: "Mínimo de 8 caracteres."),
+          ],
+        ),
+        FormBuilderTextField(
+          attribute: "confirmacao_senha",
+          decoration: InputDecoration(labelText: "Senha (confirmação)"),
+          textInputAction: TextInputAction.done,
+          onFieldSubmitted: (term) {
+            _realizarCadastro();
+          },
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
+          maxLines: 1,
+          validators: [
+            CustomFormBuilderValidators.required(),
+            FormBuilderValidators.minLength(8,
+                errorText: "Mínimo de 8 caracteres."),
+            CustomFormBuilderValidators.confirmarSenha(_senhaController),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 15),
+          child: Center(
+            child: OutlineButton(
+              onPressed: _realizarCadastro,
+              child: Text(
+                "Finalizar Cadastro",
               ),
             ),
           ),
-        ],
-      );
-    });
-  }
-
-  void _realizarCadastro() {
-    if (!_fbKey.currentState.saveAndValidate()) {
-      Messages().sendWarningToast(context, 'Atenção!',
-          'Verifique os dados informados antes de proseguir.');
-      return;
-    }
-    if (!cadastroStore.celularVerificado) {
-      Messages().sendWarningToast(
-          context, 'Atenção!', 'Confirme seu celular antes de proseguir.');
-      return;
-    }
-    Messages()
-        .sendSuccessToast(context, 'Sucesso!', 'Cadastro efetuado, aguarde...');
+        ),
+      ],
+    );
   }
 
   _enviarSMS(BuildContext context) async {
@@ -432,5 +436,48 @@ class _CadastroPageState extends State<CadastroPage> {
         );
       },
     );
+  }
+
+  void _realizarCadastro() {
+    if (!_fbKey.currentState.saveAndValidate()) {
+      Messages().sendWarningToast(context, 'Atenção!',
+          'Verifique os dados informados antes de proseguir.');
+      return;
+    }
+    if (!cadastroStore.celularVerificado) {
+      Messages().sendWarningToast(
+          context, 'Atenção!', 'Confirme seu celular antes de proseguir.');
+      return;
+    }
+
+    Usuario usuario = Usuario();
+    usuario.tipoUsuario = cadastroStore.tipoConta == 0
+        ? TipoUsuario.PESSOA_FISICA
+        : TipoUsuario.PESSOA_JURIDICA;
+    if (usuario.tipoUsuario == TipoUsuario.PESSOA_FISICA) {
+      usuario.nome = _fbKey.currentState.value['nome'];
+      usuario.documento = _fbKey.currentState.value['cpf'];
+    } else {
+      usuario.nome = _fbKey.currentState.value['razao_social'];
+      usuario.documento = _fbKey.currentState.value['cnpj'];
+    }
+    usuario.pais = pais;
+    usuario.ddi = countryCode;
+    usuario.celular = celularMask.getUnmaskedText();
+
+    usuario.email = _fbKey.currentState.value['email'];
+    usuario.senha = _fbKey.currentState.value['senha'];
+
+    UsuarioRepository().cadastrar(usuario).then((value) {
+      if (value) {
+        Messages().sendSuccessToast(
+            context, 'Sucesso!', 'Cadastro efetuado, aguarde...');
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => PrincipalPage()));
+      } else {
+        Messages().sendWarningToast(context, 'Atenção!',
+            'Não foi possível efetuar cadastro no momento, tente novamente mais tarde.');
+      }
+    });
   }
 }
