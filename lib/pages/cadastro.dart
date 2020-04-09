@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -141,6 +142,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
   Widget celularConfirm() {
     return Card(
+      color: Theme.of(context).canvasColor,
       elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -201,9 +203,12 @@ class _CadastroPageState extends State<CadastroPage> {
                       child: RaisedButton(
                         color: Colors.white,
                         onPressed: () => _enviarSMS(context),
-                        child: Text(
+                        child: AutoSizeText(
                           "Confirmar",
                           style: TextStyle(fontSize: 10),
+                          maxLines: 1,
+                          minFontSize: 5,
+                          softWrap: true,
                         ),
                       ),
                     ),
@@ -340,16 +345,20 @@ class _CadastroPageState extends State<CadastroPage> {
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
-    };
+      print(authException.message);
+        };
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
       cadastroStore.setVerificationCode(verificationId);
+      print("Code Sent:");
+      print(verificationId);
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
-      cadastroStore.setVerificationCode(verificationId);
+          print("PhoneCodeAutoRetrievalTimeout:");
+      //cadastroStore.setVerificationCode(verificationId);
     };
 
     await _auth.verifyPhoneNumber(
@@ -394,6 +403,7 @@ class _CadastroPageState extends State<CadastroPage> {
           actions: <Widget>[
             FlatButton(
               onPressed: () {
+                cadastroStore.setErroVerificacao(null);
                 Navigator.of(context).pop();
               },
               child: Text("Cancelar"),
@@ -484,7 +494,6 @@ class _CadastroPageState extends State<CadastroPage> {
 
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => PrincipalPage(usuario)));
-
       } else {
         Messages().sendWarningToast(context, 'Atenção!',
             'Não foi possível efetuar cadastro no momento, tente novamente mais tarde.');

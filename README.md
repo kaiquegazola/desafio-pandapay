@@ -49,3 +49,17 @@
 <img src="screenshots/9.png" width="150" />
 <img src="screenshots/10.png" width="150" />
 </p>
+
+## Test accounts
+
+| E-mail                        | Password  |
+|:------------------------------|:----------|
+| teste@teste.com               | 123456789 |
+| kaique.gazola@fatec.sp.gov.br | 123456789 |
+
+## Test Mobile Phones
+
+| Phone number              | Code   |
+|:--------------------------|:-------|
+| +55 17 98976-5514         | 456789 |
+| +55 11 3696-4091          | 123456 |

@@ -37,6 +37,7 @@ dependencies:
   progress_dialog: ^1.2.1
   persistent_bottom_nav_bar: ^1.2.1
   flutter_advanced_networkimage: ^0.7.0
+  auto_size_text: ^2.1.0
 
 dev_dependencies:
   flutter_test:

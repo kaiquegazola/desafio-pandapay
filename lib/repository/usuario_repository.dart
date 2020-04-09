@@ -41,6 +41,6 @@ class UsuarioRepository {
   Future<Usuario> getUsuario(FirebaseUser user) async {
     var usuario =
         await _firestore.collection("Usuario").document(user.email).get();
-    return Usuario.fromJson(usuario.data);
+    return usuario.data == null ? null : Usuario.fromJson(usuario.data);
   }
 }

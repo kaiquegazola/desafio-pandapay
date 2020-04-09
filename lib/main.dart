@@ -7,6 +7,7 @@ import 'package:pandapay/pages/principal.dart';
 import 'package:pandapay/pages/slideshow.dart';
 import 'package:pandapay/repository/usuario_repository.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:pandapay/model/usuario.dart';
 
 void main() {
   runApp(
@@ -28,6 +29,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
       body: Container(
         color: Color(0xFF191919),
         padding: const EdgeInsets.all(25.0),
@@ -65,9 +68,15 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     FirebaseAuth _auth = FirebaseAuth.instance;
     await _auth.currentUser().then((value) async {
       if (value != null) {
-        var usuario = await UsuarioRepository().getUsuario(value);
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => PrincipalPage(usuario)));
+        Usuario usuario = await UsuarioRepository().getUsuario(value);
+        if (usuario == null) {
+          _auth.signOut();
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => SlideshowPage()));
+        } else {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => PrincipalPage(usuario)));
+        }
       } else {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => SlideshowPage()));
