@@ -24,7 +24,7 @@ class Usuario {
       this.senha});
 
   Usuario.fromJson(Map<String, dynamic> json) {
-    tipoUsuario = TipoUsuarioHelper.toTipoUsuarioValue(json['tipoUsuario']);
+    tipoUsuario = TipoUsuarioHelper.toTipoUsuarioValue(json['tipoUsuario'] ?? "PESSOA_FISICA");
     nome = json['nome'];
     documento = json['documento'];
     pais = json['pais'];

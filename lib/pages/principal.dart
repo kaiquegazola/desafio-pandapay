@@ -4,6 +4,8 @@ import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pandapay/model/usuario.dart';
+import 'package:pandapay/pages/principal/blockchain.dart';
+import 'package:pandapay/pages/principal/pagar.dart';
 import 'package:pandapay/pages/slideshow.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:pandapay/pages/principal/carteira.dart';
@@ -32,15 +34,11 @@ class _PrincipalPageState extends State<PrincipalPage> {
   List<Widget> _buildScreens() {
     return [
       CarteiraFragment(),
-      Container(
-        color: Colors.black,
-      ),
-      Container(
-        color: Colors.orange,
-      ),
+      PagarFragment(),
       Container(
         color: Colors.indigoAccent,
       ),
+      BlockchainFragment(widget.usuario),
       Container(
         color: Colors.white,
       )

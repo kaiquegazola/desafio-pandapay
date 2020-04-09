@@ -354,7 +354,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
     await _auth.verifyPhoneNumber(
         phoneNumber: celular,
-        timeout: const Duration(seconds: 15),
+        timeout: const Duration(seconds: 120),
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: codeSent,
